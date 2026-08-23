@@ -1,0 +1,8 @@
+# Anchor file: ensures the treefmt `oxfmt` formatter (configured with
+# includes = ["*.toml"]) always resolves at least one explicit target at the
+# flake root. The generated .treefmt.toml uses tree-root = repo root, so the
+# "*.toml" glob only matches top-level TOML files. Without this anchor, no
+# top-level TOML exists, treefmt invokes `oxfmt --config <rc>` with no file
+# arguments, oxfmt falls back to a whole-directory scan and attempts to
+# reformat non-TOML sources (e.g. *.ts), which fails the check.
+anchor = true
