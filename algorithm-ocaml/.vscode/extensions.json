@@ -1,5 +1,3 @@
 {
-  "recommendations": [
-    "ocamllabs.ocaml-platform"
-  ]
+  "recommendations": ["ocamllabs.ocaml-platform"]
 }

@@ -22,7 +22,7 @@ jobs:
           sign-commits: true
           username: Operator 6O <operator6o@shikanime.studio>
 name: Land
-'on':
+"on":
   issue_comment:
     types:
       - created

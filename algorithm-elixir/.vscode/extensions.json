@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "JakeBecker.elixir-ls",
-    "erlang-ls.erlang-ls"
-  ]
+  "recommendations": ["JakeBecker.elixir-ls", "erlang-ls.erlang-ls"]
 }

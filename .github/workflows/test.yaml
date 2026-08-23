@@ -14,7 +14,9 @@ jobs:
       - uses: shikanime-studio/setup-nix-action@v1
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
-      - run: nix develop --accept-flake-config --no-pure-eval .#${{ matrix.package }} --command devenv test
+      - run:
+          nix develop --accept-flake-config --no-pure-eval .#${{ matrix.package
+          }} --command devenv test
         working-directory: ${{ matrix.package }}
     strategy:
       matrix:
@@ -25,7 +27,7 @@ jobs:
           - algorithm-ocaml
           - algorithm-python
 name: Test
-'on':
+"on":
   pull_request:
     branches:
       - main

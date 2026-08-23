@@ -14,15 +14,19 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'yorha-operator-6o[bot]'
+        if:
+          github.event.pull_request.user.login == 'dependabot[bot]' ||
+          github.event.pull_request.user.login == 'yorha-operator-6o[bot]'
         run: gh pr edit "$PR_NUMBER" --add-label dependencies
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
+        if:
+          startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref,
+          '/head')
         run: gh pr edit "$PR_NUMBER" --add-label ghstack
 name: Triage
-'on':
+"on":
   pull_request:
     branches:
       - main
