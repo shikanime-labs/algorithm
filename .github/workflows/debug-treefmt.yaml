@@ -13,6 +13,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Write-mode format, dump git status
+      - name: Write-mode format (zizmor will fail; tolerated)
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash .github/scripts/debug-treefmt.sh
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git || true
+        continue-on-error: true
+      - name: Dump git status of formatted files
+        run: |
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command git --no-pager status --short
