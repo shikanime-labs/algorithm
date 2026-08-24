@@ -4,6 +4,7 @@ name: Debug Format
   push:
     branches:
       - update-flake-inputs
+permissions: {}
 jobs:
   debug:
     runs-on: ubuntu-latest
@@ -22,23 +23,14 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: |
+          set +e
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
             set +e
-            echo "RESULTS_START"
-            for p in \
-              ".devenv/**" \
-              ".devenv/**/*" \
-              "**/.devenv/**" \
-              ".devenv" \
-              ".devenv/*" \
-              ".rumdl_cache/**" \
-              ".rumdl_cache/*" \
-              ".rumdl_cache" \
-              ".pre-commit-config.yaml" \
-              ".devenv/state/**" \
-              ".devenv/tasks.db*" ; do
-              OUT=$(treefmt --check --excludes ".pre-commit-config.yaml" "$p" 2>/dev/null | grep -oE "[0-9]+ changed" | head -1)
-              echo "PAT=[$p] -> ${OUT:-UNKNOWN}"
-            done
-            echo "RESULTS_END"
+            echo "TOML_DUMP_START"
+            find . -path ./node_modules -prune -o -name "treefmt.toml" -print 2>/dev/null
+            echo "---"
+            T=$(find .devenv -name "treefmt.toml" 2>/dev/null | head -1)
+            echo "T=$T"
+            cat "$T" 2>/dev/null
+            echo "TOML_DUMP_END"
           ' || true
