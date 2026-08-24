@@ -1,0 +1,25 @@
+name: Debug Format
+"on":
+  workflow_dispatch:
+  push:
+    branches:
+      - update-flake-inputs
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          permission-contents: read
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - uses: shikanime-studio/setup-nix-action@v1
+        with:
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
+      - run: nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --fix --verbose || true
+      - run: echo "=== ALL IGNORED UNTRACKED (expanded) ===" && git status --short --ignored --untracked-files=all | grep -E '^.!.!|!!' | head -60 || true
