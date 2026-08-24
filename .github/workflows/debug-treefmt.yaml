@@ -1,0 +1,18 @@
+name: debug-treefmt
+on:
+  workflow_dispatch:
+  push:
+    branches: [update-flake-inputs]
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shikanime-studio/setup-nix-action@v1
+      - name: Run treefmt --check --verbose (linux)
+        run: nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git --check --verbose
+        continue-on-error: true
+      - name: List changed files via git
+        run: |
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git --allow-missing-formatter 2>&1 | tail -20 || true
+          git status --short | head -40 || true
