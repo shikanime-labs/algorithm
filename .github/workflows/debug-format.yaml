@@ -22,4 +22,5 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --fix --verbose || true
-      - run: echo "=== CHANGED FILES ===" && git diff --name-only || true
+      - run: echo "=== TRACKED CHANGED ===" && git diff --name-only || true
+      - run: echo "=== IGNORED DIRTY ===" && git status --short --ignored | grep -E '^.!.!|!!' || true
