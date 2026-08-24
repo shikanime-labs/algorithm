@@ -2,6 +2,9 @@ name: Debug Toml
 permissions: {}
 
 on:
+  push:
+    branches:
+      - update-flake-inputs
   workflow_dispatch:
 
 jobs:
