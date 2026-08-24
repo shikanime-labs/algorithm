@@ -9,21 +9,21 @@ class ListNode:
 
 
 class Solution:
-    def reorderList(self, head: Optional[ListNode]) -> None:
+    def reorderList(self, head: ListNode | None) -> None:
         """
         Do not return anything, modify head in-place instead.
         """
         second = self.reverse(self.disconnect(self.middle(head)))
         self.interleave(head, second)
 
-    def disconnect(self, head: Optional[ListNode]):
+    def disconnect(self, head: ListNode | None):
         if not head:
             return None
         cursor = head.next
         head.next = None
         return cursor
 
-    def middle(self, head: Optional[ListNode]):
+    def middle(self, head: ListNode | None):
         if not head:
             return None
         slow, fast = head, head.next
@@ -32,7 +32,7 @@ class Solution:
             fast = fast.next.next
         return slow
 
-    def reverse(self, head: Optional[ListNode]):
+    def reverse(self, head: ListNode | None):
         cursor = head
         prev = None
         while cursor:
@@ -42,7 +42,7 @@ class Solution:
             cursor = tmp
         return prev
 
-    def interleave(self, a: Optional[ListNode], b: Optional[ListNode]):
+    def interleave(self, a: ListNode | None, b: ListNode | None):
         while a and b:
             tmpa, tmpb = a.next, b.next
             a.next = b

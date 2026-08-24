@@ -9,7 +9,7 @@ class ListNode:
 
 
 class Solution:
-    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    def detectCycle(self, head: ListNode | None) -> ListNode | None:
         acks = set()
         while head is not None:
             if id(head) in acks:

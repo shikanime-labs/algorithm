@@ -3,7 +3,7 @@ from functools import partial
 from operator import itemgetter, ne
 
 
-class Solution(object):
+class Solution:
     def isValidSudoku(self, board):
         """
         :type board: List[List[str]]
