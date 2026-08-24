@@ -24,3 +24,5 @@ jobs:
       - run: nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --fix --verbose || true
       - run: echo "=== TRACKED CHANGED ===" && git diff --name-only || true
       - run: echo "=== IGNORED DIRTY ===" && git status --short --ignored | grep -E '^.!.!|!!' || true
+      - run: echo "=== .devenv git status (untracked files) ===" && git -c core.quotepath=false status --short --ignored .devenv 2>/dev/null | head -40 || true
+      - run: echo "=== generated treefmt.toml respect_gitignore ==="; find .devenv -name 'treefmt.toml' -exec grep -nE "respect_gitignore|excludes|devenv" {} \; 2>/dev/null | head -20 || true
