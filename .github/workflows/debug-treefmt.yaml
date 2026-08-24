@@ -13,10 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Write-mode format (zizmor will fail; tolerated)
+      - name: List files treefmt would reformat (check mode, verbose)
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git || true
-        continue-on-error: true
-      - name: Dump git status of formatted files
-        run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command git --no-pager status --short
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git --check --verbose 2>&1 | grep -vE 'zizmor|audit|help:|^ *=' || true
