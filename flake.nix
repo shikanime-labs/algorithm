@@ -53,18 +53,20 @@
                 treefmt.config.settings.formatter."dyff-json".excludes = [
                   "algorithm-javascript/package-lock.json"
                 ];
-                # treefmt --check walks gitignored generated artifacts and reformats
-                # them, failing devenv test. The option that reaches treefmt.toml is
-                # settings.global.excludes (renamed to [excludes] by the schema); the
-                # bare settings.excludes / settings.global.excludes forms are dropped.
-                # Mirror devlib's defaults and add recursive dir globs so the generated
-                # .devenv/, .direnv/, .rumdl_cache/ trees are skipped, plus the
-                # generated .pre-commit-config.yaml.
-                treefmt.config.settings.global.excludes = [
-                  ".devenv/**"
-                  ".direnv/**"
-                  ".rumdl_cache/**"
+                # treefmt --check walks gitignored generated artifacts (.devenv/,
+                # .direnv/, .rumdl_cache/) and reformats them, failing devenv test.
+                # devenv's treefmt integration renders `settings.global.excludes` to a
+                # [global] table, which treefmt v2.5.0 only honours as a fallback when
+                # the top-level `excludes` is empty. So we set the top-level
+                # `settings.excludes` directly (the preferred key). gobwas/glob treats
+                # `*' as crossing path separators, so `.devenv/*` already matches nested
+                # files like `.devenv/state/files.json`.
+                treefmt.config.settings.excludes = [
+                  ".devenv/*"
+                  ".direnv/*"
+                  ".rumdl_cache/*"
                   ".pre-commit-config.yaml"
+                  "node_modules/*"
                   "*.assetsignore"
                   "*.dockerignore"
                   "*.gcloudignore"
