@@ -23,21 +23,10 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: |
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
-            set -e
-            echo "=== baseline (generated config, excludes .pre-commit-config.yaml) ==="
-            treefmt --check 2>&1 | grep -E "changed|traversed|emitted" || true
-            echo
-            for p in \
-              ".devenv/*" \
-              ".devenv/**" \
-              ".devenv/**/*" \
-              "**/.devenv/**" \
-              ".devenv" \
-              "**/.devenv/*" \
-              ".direnv/**" \
-              ".rumdl_cache/**" \
-              ".rumdl_cache/*" ; do
-              echo "=== candidate: $p ==="
-              treefmt --check --excludes ".pre-commit-config.yaml" "$p" 2>&1 | grep -E "changed" || true
-            done
+            echo "=== SEARCH_TOML ==="
+            T=$(find .devenv -name "treefmt.toml" 2>/dev/null | head -1)
+            echo "path=$T"
+            echo "=== BEGIN_TOML ==="
+            cat "$T"
+            echo "=== END_TOML ==="
           ' || true
