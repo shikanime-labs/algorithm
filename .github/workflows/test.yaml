@@ -16,7 +16,7 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-          permissions: contents:read
+          permission-contents: read
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0

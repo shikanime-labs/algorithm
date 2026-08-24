@@ -49,6 +49,13 @@
               devlib.devenvModules.nix
               devlib.devenvModules.shell
               devlib.devenvModules.shikanime
+              # dyff-json rewrites all *.json inline; package-lock.json must stay
+              # single-line for `npm ci` integrity, so exclude it.
+              {
+                treefmt.config.settings.formatter."dyff-json".excludes = [
+                  "algorithm-javascript/package-lock.json"
+                ];
+              }
             ];
             shells = {
               algorithm-cc = {
@@ -122,12 +129,6 @@
               };
             };
           };
-
-          # The dyff-json formatter rewrites all *.json inline; a single-line
-          # package-lock.json is required for `npm ci` integrity, so exclude it.
-          treefmt.config.settings.formatter."dyff-json".excludes = [
-            "algorithm-javascript/package-lock.json"
-          ];
 
           systems = [
             "x86_64-linux"
