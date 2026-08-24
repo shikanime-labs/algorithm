@@ -13,10 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Write-mode format the real checkout (zizmor will fail; tolerated)
+      - name: Dump the treefmt.toml devenv test uses
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'CFG=$(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml" | head -1); echo "CFG=$CFG"; treefmt --config-file="$CFG" --tree-root="$GITHUB_WORKSPACE" --walk=git || true'
-        continue-on-error: true
-      - name: Git status of real checkout (files treefmt changed)
-        run: |
-          git -C "$GITHUB_WORKSPACE" status --short
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'CFG=$(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml" | head -1); echo "=== TOML PATH: $CFG ==="; cat "$CFG"'
