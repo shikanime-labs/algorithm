@@ -54,6 +54,7 @@
             shells = {
               algorithm-cc = {
                 enterTest = ''
+                  cd algorithm-cc
                   ${lib.getExe pkgs.cmake} \
                     --preset unknown-unknown-gnu \
                     -B out/build/unknown-unknown-gnu
@@ -86,6 +87,7 @@
                   devlib.devenvModules.elixir
                 ];
                 enterTest = ''
+                  cd algorithm-elixir
                   ${pkgs.elixir}/bin/mix deps.get
                   ${pkgs.elixir}/bin/mix test
                 '';
@@ -95,6 +97,7 @@
                   devlib.devenvModules.javascript
                 ];
                 enterTest = ''
+                  cd algorithm-javascript
                   ${pkgs.nodejs}/bin/npm ci
                   ${pkgs.nodejs}/bin/npm run test
                 '';
@@ -104,6 +107,7 @@
                   devlib.devenvModules.ocaml
                 ];
                 enterTest = ''
+                  cd algorithm-ocaml
                   ${lib.getExe pkgs.dune_3} runtest
                 '';
               };
@@ -112,6 +116,7 @@
                   devlib.devenvModules.python
                 ];
                 enterTest = ''
+                  cd algorithm-python
                   ${lib.getExe pkgs.uv} run pytest
                 '';
               };
