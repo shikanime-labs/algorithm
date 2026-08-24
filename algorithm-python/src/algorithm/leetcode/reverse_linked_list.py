@@ -9,12 +9,12 @@ class ListNode:
 
 
 class Solution:
-    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    def reverseList(self, head: ListNode | None) -> ListNode | None:
         return self.traverse(head)
 
     def traverse(
-        self, head: Optional[ListNode], acc: Optional[ListNode] = None
-    ) -> Optional[ListNode]:
+        self, head: ListNode | None, acc: ListNode | None = None
+    ) -> ListNode | None:
         if head is None:
             return acc
         return self.traverse(head.next, ListNode(head.val, acc))

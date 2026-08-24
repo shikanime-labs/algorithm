@@ -10,6 +10,6 @@ class Solution:
             for i, n in enumerate(subnums):
                 diff = -target - n
                 if diff in memo:
-                    res.add(tuple(sorted([target, subnums[memo[diff]], subnums[i]])))
+                    res.add(tuple(sorted([target, subnums[memo[diff]], n])))
                 memo[n] = i
         return res

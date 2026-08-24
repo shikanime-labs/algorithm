@@ -1,4 +1,4 @@
-class MinStack(object):
+class MinStack:
     def __init__(self):
         self.data = []
         self.min_data = []

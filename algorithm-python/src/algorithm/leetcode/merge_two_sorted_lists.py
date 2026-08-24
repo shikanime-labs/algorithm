@@ -10,16 +10,16 @@ class ListNode:
 
 class Solution:
     def mergeTwoLists(
-        self, list1: Optional[ListNode], list2: Optional[ListNode]
-    ) -> Optional[ListNode]:
+        self, list1: ListNode | None, list2: ListNode | None
+    ) -> ListNode | None:
         return self.traverse(list1, list2)
 
     def traverse(
         self,
-        list1: Optional[ListNode],
-        list2: Optional[ListNode],
-        acc: Optional[ListNode] = None,
-    ) -> Optional[ListNode]:
+        list1: ListNode | None,
+        list2: ListNode | None,
+        acc: ListNode | None = None,
+    ) -> ListNode | None:
         if list1 is not None and list2 is not None:
             if list1.val >= list2.val:
                 return ListNode(list2.val, self.traverse(list1, list2.next, acc))

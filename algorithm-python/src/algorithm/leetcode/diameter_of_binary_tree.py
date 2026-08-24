@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional
 
 
 @dataclass
@@ -10,11 +10,11 @@ class TreeNode:
 
 
 class Solution:
-    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+    def diameterOfBinaryTree(self, root: TreeNode | None) -> int:
         _, diameter = self.traverse(root)
         return diameter
 
-    def traverse(self, root: Optional[TreeNode]) -> Tuple[int, int]:
+    def traverse(self, root: TreeNode | None) -> tuple[int, int]:
         if not root:
             return -1, 0
         rheight, rdiameter = self.traverse(root.right)

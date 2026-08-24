@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional
 
 
 @dataclass
@@ -10,11 +10,11 @@ class TreeNode:
 
 
 class Solution:
-    def isBalanced(self, root: Optional[TreeNode]) -> bool:
+    def isBalanced(self, root: TreeNode | None) -> bool:
         is_balanced, _ = self.traverse(root)
         return is_balanced
 
-    def traverse(self, root: Optional[TreeNode]) -> Tuple[bool, int]:
+    def traverse(self, root: TreeNode | None) -> tuple[bool, int]:
         if not root:
             return True, 0
         is_left_balanced, left = self.traverse(root.left)

@@ -1,6 +1,5 @@
 {
   inputs = {
-    automata.url = "github:shikanime-studio/automata";
     devenv.url = "github:cachix/devenv";
     devlib.url = "github:shikanime-studio/devlib";
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -40,7 +39,6 @@
       ];
       perSystem =
         {
-          config,
           lib,
           pkgs,
           ...
@@ -48,61 +46,44 @@
         {
           devenv = {
             modules = [
-              devlib.devenvModules.docs
-              devlib.devenvModules.formats
               devlib.devenvModules.nix
               devlib.devenvModules.shell
               devlib.devenvModules.shikanime
+              {
+                treefmt.config.settings.formatter."dyff-json".excludes = [
+                  "algorithm-javascript/package-lock.json"
+                ];
+                # treefmt --check walks gitignored generated artifacts (.devenv/,
+                # .direnv/, .rumdl_cache/) and reformats them, failing devenv test.
+                # devenv's treefmt integration renders `settings.global.excludes` to a
+                # [global] table, which treefmt v2.5.0 only honours as a fallback when
+                # the top-level `excludes` is empty. So we set the top-level
+                # `settings.excludes` directly (the preferred key). gobwas/glob treats
+                # `*' as crossing path separators, so `.devenv/*` already matches nested
+                # files like `.devenv/state/files.json`.
+                treefmt.config.settings.excludes = [
+                  ".devenv/*"
+                  ".direnv/*"
+                  ".rumdl_cache/*"
+                  ".pre-commit-config.yaml"
+                  "node_modules/*"
+                  "*.assetsignore"
+                  "*.dockerignore"
+                  "*.gcloudignore"
+                  "*.gif"
+                  "*.ico"
+                  "*.jpg"
+                  "*.png"
+                  "*.svg"
+                  "*.txt"
+                  "*.webp"
+                ];
+              }
             ];
             shells = {
-              default = {
-                imports = [
-                  devlib.devenvModules.github
-                ];
-                github.workflows.test = with config.devenv.shells.default.github.actions; {
-                  enable = true;
-                  settings = {
-                    name = "Test";
-                    on = {
-                      push.branches = [ "main" ];
-                      pull_request.branches = [
-                        "main"
-                        "gh/*/*/base"
-                      ];
-                    };
-                    jobs.test = {
-                      "runs-on" = "ubuntu-latest";
-                      steps = with config.devenv.shells.default.github.lib; [
-                        create-github-app-token
-                        checkout
-                        setup-nix
-                        {
-                          run = mkWorkflowRun [
-                            "nix"
-                            "develop"
-                            "--accept-flake-config"
-                            "--no-pure-eval"
-                            ".#${mkWorkflowRef "matrix.package"}"
-                            "--command"
-                            "devenv"
-                            "test"
-                          ];
-                          "working-directory" = mkWorkflowRef "matrix.package";
-                        }
-                      ];
-                      strategy.matrix.package = [
-                        "algorithm-cc"
-                        "algorithm-elixir"
-                        "algorithm-javascript"
-                        "algorithm-ocaml"
-                        "algorithm-python"
-                      ];
-                    };
-                  };
-                };
-              };
               algorithm-cc = {
                 enterTest = ''
+                  cd algorithm-cc
                   ${lib.getExe pkgs.cmake} \
                     --preset unknown-unknown-gnu \
                     -B out/build/unknown-unknown-gnu
@@ -135,6 +116,7 @@
                   devlib.devenvModules.elixir
                 ];
                 enterTest = ''
+                  cd algorithm-elixir
                   ${pkgs.elixir}/bin/mix deps.get
                   ${pkgs.elixir}/bin/mix test
                 '';
@@ -144,6 +126,7 @@
                   devlib.devenvModules.javascript
                 ];
                 enterTest = ''
+                  cd algorithm-javascript
                   ${pkgs.nodejs}/bin/npm ci
                   ${pkgs.nodejs}/bin/npm run test
                 '';
@@ -153,6 +136,7 @@
                   devlib.devenvModules.ocaml
                 ];
                 enterTest = ''
+                  cd algorithm-ocaml
                   ${lib.getExe pkgs.dune_3} runtest
                 '';
               };
@@ -160,7 +144,9 @@
                 imports = [
                   devlib.devenvModules.python
                 ];
+                languages.python.directory = "algorithm-python";
                 enterTest = ''
+                  cd algorithm-python
                   ${lib.getExe pkgs.uv} run pytest
                 '';
               };
@@ -169,7 +155,6 @@
         };
       systems = [
         "x86_64-linux"
-        "x86_64-darwin"
         "aarch64-linux"
         "aarch64-darwin"
       ];

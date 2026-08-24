@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from functools import partial, reduce
-from typing import Iterable
 
 
 class Solution:

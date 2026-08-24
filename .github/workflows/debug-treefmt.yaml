@@ -1,0 +1,22 @@
+name: debug-treefmt
+on:
+  workflow_dispatch:
+  push:
+    branches: [update-flake-inputs]
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: shikanime-studio/setup-nix-action@v1
+      - name: Format (direct treefmt command)
+        run: |
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git || true
+        continue-on-error: true
+      - name: Dump status (direct git command)
+        run: |
+          git -C "$GITHUB_WORKSPACE" status --short
