@@ -53,15 +53,16 @@
                 treefmt.config.settings.formatter."dyff-json".excludes = [
                   "algorithm-javascript/package-lock.json"
                 ];
-                # Generated/build artifacts are gitignored; treefmt does not
-                # honour .gitignore here, and devlib's shallow ".devenv/*" misses
-                # nested files (.devenv/state/*, .devenv/tasks.db*), so
-                # treefmt --check reformats them and the run fails. Exclude the
-                # generated directories wholesale (trailing slash = recursive).
-                treefmt.config.settings.global.excludes = [
-                  ".devenv/"
-                  ".direnv/"
-                  ".rumdl_cache/"
+                # treefmt --check walks the repo root and reformats gitignored
+                # generated artifacts (.devenv/**, .rumdl_cache/**) plus the
+                # generated .pre-commit-config.yaml, failing devenv test. The
+                # schema-stripped 'settings.global.excludes' cannot be used; the
+                # real option is 'settings.excludes' (renamed from global.excludes).
+                # Glob '**' excludes the directory and everything beneath it.
+                treefmt.config.settings.excludes = [
+                  ".devenv/**"
+                  ".direnv/**"
+                  ".rumdl_cache/**"
                   ".pre-commit-config.yaml"
                 ];
               }
