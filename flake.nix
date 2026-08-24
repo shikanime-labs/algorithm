@@ -53,6 +53,15 @@
                 treefmt.config.settings.formatter."dyff-json".excludes = [
                   "algorithm-javascript/package-lock.json"
                 ];
+                # Generated/build artifacts are gitignored; shallow ".devenv/*"
+                # misses nested files, so treefmt --check reformats them and fails.
+                # Recursively exclude generated dirs and the generated pre-commit file.
+                treefmt.config.settings.global.excludes = [
+                  ".devenv/**"
+                  ".direnv/**"
+                  ".rumdl_cache/**"
+                  ".pre-commit-config.yaml"
+                ];
               }
             ];
             shells = {
