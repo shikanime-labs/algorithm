@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [update-flake-inputs]
+env:
+  REPO: ${{ github.workspace }}
 jobs:
   debug:
     runs-on: ubuntu-latest
@@ -13,6 +15,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Dump the treefmt.toml devenv test uses
+      - name: Write-mode format the real checkout with full devenv config
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'CFG=$(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml" | head -1); echo "=== TOML PATH: $CFG ==="; cat "$CFG"'
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'cd "$REPO" && treefmt --tree-root=. --walk=git || true'
+        continue-on-error: true
+      - name: Show git status of reformatted files
+        run: |
+          git -C "$REPO" status --short
