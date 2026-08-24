@@ -13,17 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Strip zizmor, write-mode format, dump git status
+      - name: Write-mode format, dump git status
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
-            CFG=$(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml" | head -1)
-            python3 - <<PY
-          import re
-          s=open("'"$CFG"'").read()
-          s=re.sub(r"\n\[formatter\.zizmor\].*?(\n\[|\Z)", "\n", s, flags=re.S)
-          open("/tmp/alg_noziz.toml","w").write(s)
-          PY
-            treefmt --config-file=/tmp/alg_noziz.toml --tree-root=. --walk=git 2>&1 | tail -3 || true
-            echo "=== GIT STATUS (non-zizmor formatters WOULD change) ==="
-            git --no-pager status --short
-          '
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash .github/scripts/debug-treefmt.sh
