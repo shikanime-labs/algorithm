@@ -13,15 +13,16 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Identify changed files (write mode, exact devenv config)
+      - name: Run devenv tasks treefmt and list changed files
         run: |
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
             CFG=$(grep -rl "formatter.zizmor" $(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml$") 2>/dev/null | head -1)
-            echo "CFG=$CFG"
-            treefmt --config-file="$CFG" --tree-root=. --walk=git 2>&1 | tail -5 || true
-            git status --short > /tmp/changed.txt 2>&1 || true
-          '
-        continue-on-error: true
-      - name: Show changed files
-        run: |
-          cat /tmp/changed.txt || echo "no /tmp/changed.txt"
+            treefmt --config-file="$CFG" --tree-root=. --walk=git > /tmp/out.txt 2>&1 || true
+            {
+              echo "=== TREEFMT SUMMARY ==="
+              tail -3 /tmp/out.txt
+              echo "=== GIT STATUS ==="
+              git status --short
+            } > /tmp/result.txt 2>&1
+            cat /tmp/result.txt
+          ' || true
