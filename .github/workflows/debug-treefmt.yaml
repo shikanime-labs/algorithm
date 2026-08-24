@@ -13,13 +13,12 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Reveal devenv treefmt task (exact config + command)
+      - name: Identify changed files (write mode, exact devenv config)
         run: |
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
-            echo "=== .devenv/tasks ==="
-            ls -la .devenv/tasks/ 2>/dev/null
-            echo "=== devenv:treefmt:run script ==="
-            find .devenv -name "*treefmt*" 2>/dev/null -exec echo "--- {} ---" \; -exec cat {} \;
-            echo "=== which treefmt / config env ==="
-            env | grep -i treefmt
+            CFG=$(grep -rl "formatter.zizmor" $(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml$") 2>/dev/null | head -1)
+            echo "CFG=$CFG"
+            treefmt --config-file="$CFG" --tree-root=. --walk=git 2>&1 | tail -5 || true
+            echo "=== GIT STATUS (files treefmt reformatted) ==="
+            git status --short
           '
