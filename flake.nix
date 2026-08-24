@@ -61,6 +61,8 @@
                 # `settings.excludes` directly (the preferred key). gobwas/glob treats
                 # `*' as crossing path separators, so `.devenv/*` already matches nested
                 # files like `.devenv/state/files.json`.
+                # TEMP DEBUG: disable zizmor so the shell enters and we can print the toml
+                treefmt.config.programs.zizmor.enable = false;
                 treefmt.config.settings.excludes = [
                   ".devenv/*"
                   ".direnv/*"
