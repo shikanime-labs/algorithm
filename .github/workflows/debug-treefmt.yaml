@@ -13,14 +13,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Identify changed files (write to real checkout)
+      - name: Format (direct treefmt command)
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
-            CFG=$(grep -rl "formatter.zizmor" $(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml$") 2>/dev/null | head -1)
-            treefmt --config-file="$CFG" --tree-root=. --walk=git > /tmp/tf.txt 2>&1 || true
-            git status --short > /tmp/status.txt 2>&1 || true
-            cp /tmp/status.txt "$GITHUB_WORKSPACE/CHANGED_FILES.txt" 2>/dev/null || true
-          ' || true
-      - name: Read changed files
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command treefmt --tree-root=. --walk=git || true
+        continue-on-error: true
+      - name: Dump status (direct git command)
         run: |
-          cat "$GITHUB_WORKSPACE/CHANGED_FILES.txt" || echo "missing"
+          git -C "$GITHUB_WORKSPACE" status --short
