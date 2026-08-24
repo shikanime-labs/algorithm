@@ -39,7 +39,6 @@
       ];
       perSystem =
         {
-          config,
           lib,
           pkgs,
           ...
@@ -115,6 +114,7 @@
                 imports = [
                   devlib.devenvModules.python
                 ];
+                languages.python.directory = "algorithm-python";
                 enterTest = ''
                   cd algorithm-python
                   ${lib.getExe pkgs.uv} run pytest
@@ -122,11 +122,18 @@
               };
             };
           };
+
+          # The dyff-json formatter rewrites all *.json inline; a single-line
+          # package-lock.json is required for `npm ci` integrity, so exclude it.
+          treefmt.config.settings.formatter."dyff-json".excludes = [
+            "algorithm-javascript/package-lock.json"
+          ];
+
+          systems = [
+            "x86_64-linux"
+            "aarch64-linux"
+            "aarch64-darwin"
+          ];
         };
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
     };
 }
