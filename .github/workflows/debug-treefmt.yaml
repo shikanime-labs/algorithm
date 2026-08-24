@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
   push:
     branches: [update-flake-inputs]
-env:
-  REPO: ${{ github.workspace }}
 jobs:
   debug:
     runs-on: ubuntu-latest
@@ -15,10 +13,13 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Write-mode format the real checkout with full devenv config
+      - name: Reveal devenv treefmt task (exact config + command)
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'cd "$REPO" && treefmt --tree-root=. --walk=git || true'
-        continue-on-error: true
-      - name: Show git status of reformatted files
-        run: |
-          git -C "$REPO" status --short
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
+            echo "=== .devenv/tasks ==="
+            ls -la .devenv/tasks/ 2>/dev/null
+            echo "=== devenv:treefmt:run script ==="
+            find .devenv -name "*treefmt*" 2>/dev/null -exec echo "--- {} ---" \; -exec cat {} \;
+            echo "=== which treefmt / config env ==="
+            env | grep -i treefmt
+          '
