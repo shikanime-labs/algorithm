@@ -13,9 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Capture treefmt check output to /tmp
+      - name: Run treefmt check and print offending files
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'treefmt --tree-root=. --walk=git --check 2>&1 | tee /tmp/treefmt-out.txt' || true
-      - name: Show captured output
-        run: |
-          cat /tmp/treefmt-out.txt
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'treefmt --tree-root=. --walk=git --check > /tmp/treefmt-out.txt 2>&1; cat /tmp/treefmt-out.txt' || true
