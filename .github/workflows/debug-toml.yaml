@@ -19,7 +19,14 @@ jobs:
       - name: Print rendered treefmt TOML
         run: |
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
-            CFG=$(grep -oP "(?<=--config-file )\S+" "$(which treefmt)")
+            echo "=== treefmt wrapper script ==="
+            cat "$(which treefmt)"
+            CFG=$(grep -oE "(--config-file[ =])[^ ]+" "$(which treefmt)" | sed "s/--config-file[ =]//")
+            if [ -z "$CFG" ]; then
+              CFG=$(grep -oE "/nix/store/[^ \"]*treefmt\.toml" "$(which treefmt)" | head -1)
+            fi
             echo "=== TOML PATH: $CFG ==="
             cat "$CFG"
+            echo "=== treefmt --ci -vv (debug) ==="
+            treefmt --ci -vv || true
           '
