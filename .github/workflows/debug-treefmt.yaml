@@ -13,9 +13,9 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Capture treefmt check output to workspace
+      - name: Capture treefmt check output to /tmp
         run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'treefmt --tree-root=. --walk=git --check 2>&1 | tee "${GITHUB_WORKSPACE}/treefmt-out.txt"' || true
+          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'treefmt --tree-root=. --walk=git --check 2>&1 | tee /tmp/treefmt-out.txt' || true
       - name: Show captured output
         run: |
-          cat "${GITHUB_WORKSPACE}/treefmt-out.txt"
+          cat /tmp/treefmt-out.txt
