@@ -19,6 +19,9 @@ jobs:
             CFG=$(grep -rl "formatter.zizmor" $(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml$") 2>/dev/null | head -1)
             echo "CFG=$CFG"
             treefmt --config-file="$CFG" --tree-root=. --walk=git 2>&1 | tail -5 || true
-            echo "=== GIT STATUS (files treefmt reformatted) ==="
-            git status --short
+            git status --short > /tmp/changed.txt 2>&1 || true
           '
+        continue-on-error: true
+      - name: Show changed files
+        run: |
+          cat /tmp/changed.txt || echo "no /tmp/changed.txt"
