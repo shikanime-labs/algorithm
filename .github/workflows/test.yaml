@@ -18,6 +18,7 @@ jobs:
           nix develop --accept-flake-config --no-pure-eval .#${{ matrix.package
           }} --command devenv test
     strategy:
+      fail-fast: false
       matrix:
         package:
           - algorithm-cc
