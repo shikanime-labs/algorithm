@@ -13,38 +13,24 @@ jobs:
         with:
           fetch-depth: 0
       - uses: shikanime-studio/setup-nix-action@v1
-      - name: Extract treefmt.toml, strip zizmor, run formatter
+      - name: Render toml, strip zizmor, write-mode format, dump git status
         run: |
-          # Build shell, locate the rendered treefmt.toml
-          CFG=$(nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c 'echo $TREEFMT_CONFIG' 2>/dev/null || true)
-          echo "TREEFMT_CONFIG=$CFG"
-          # Fallback: find it
           nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
             set -e
-            # locate the toml
-            TOML=$(ls .devenv/tasks/devenv:treefmt:* 2>/dev/null | head -1 || true)
-            echo "searching store for treefmt.toml..."
-            CFG=$(nix-store --query --requisites . 2>/dev/null | grep treefmt.toml | head -1 || true)
+            CFG=$(nix-store --query --requisites . 2>/dev/null | grep "treefmt.toml" | head -1)
             echo "CFG=$CFG"
-            if [ -n "$CFG" ]; then
-              cp "$CFG" /tmp/alg.toml
-              # strip zizmor formatter section
-              python3 - <<PY
-          import re,sys
-          s=open("/tmp/alg.toml").read()
-          # remove [formatter.zizmor] ... block
-          s=re.sub(r"\n\[formatter\.zizmor\][^\[]*", "\n", s, flags=re.S)
+            # strip [formatter.zizmor] block robustly
+            python3 - <<PY
+          import re
+          s=open("'"$CFG"'").read()
+          # remove zizmor formatter block (from its [formatter.zizmor] header to next top-level [)
+          s=re.sub(r"\n\[formatter\.zizmor\].*?(\n\[|\Z)", "\n", s, flags=re.S)
           open("/tmp/alg_noziz.toml","w").write(s)
-          print("stripped zizmor")
+          print("zizmor stripped, remaining formatters:")
+          print([l for l in s.splitlines() if l.startswith("[formatter")])
           PY
-              treefmt --config-file=/tmp/alg_noziz.toml --tree-root=. --walk=git --check --verbose 2>&1 | grep -aiE "formatted|changed|-->|\.nix|\.cc|\.py|\.json|\.md|\.yaml|\.yml|Will modify" | head -60
-            fi
-          '
-        continue-on-error: true
-      - name: Show git changes from a real (write) run without zizmor
-        run: |
-          nix develop --accept-flake-config --no-pure-eval .#algorithm-cc --command bash -c '
+            echo "=== running treefmt WRITE mode (no zizmor) ==="
             treefmt --config-file=/tmp/alg_noziz.toml --tree-root=. --walk=git 2>&1 | tail -5 || true
-            echo "=== git status (files the non-zizmor formatters would change) ==="
-            git status --short
+            echo "=== GIT STATUS (files non-zizmor formatters WOULD change) ==="
+            git --no-pager status --short | cat
           '
