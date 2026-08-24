@@ -54,15 +54,27 @@
                   "algorithm-javascript/package-lock.json"
                 ];
                 # treefmt --check walks gitignored generated artifacts and reformats
-                # them, failing devenv test. settings.excludes is the real option
-                # (settings.global.excludes is stripped by the treefmt-nix schema).
-                # gitignore-style trailing-slash globs exclude the whole directory
-                # recursively (the '**' form is not honoured by this treefmt version).
-                treefmt.config.settings.excludes = [
-                  ".devenv/"
-                  ".direnv/"
-                  ".rumdl_cache/"
+                # them, failing devenv test. The option that reaches treefmt.toml is
+                # settings.global.excludes (renamed to [excludes] by the schema); the
+                # bare settings.excludes / settings.global.excludes forms are dropped.
+                # Mirror devlib's defaults and add recursive dir globs so the generated
+                # .devenv/, .direnv/, .rumdl_cache/ trees are skipped, plus the
+                # generated .pre-commit-config.yaml.
+                treefmt.config.settings.global.excludes = [
+                  ".devenv/**"
+                  ".direnv/**"
+                  ".rumdl_cache/**"
                   ".pre-commit-config.yaml"
+                  "*.assetsignore"
+                  "*.dockerignore"
+                  "*.gcloudignore"
+                  "*.gif"
+                  "*.ico"
+                  "*.jpg"
+                  "*.png"
+                  "*.svg"
+                  "*.txt"
+                  "*.webp"
                 ];
               }
             ];
