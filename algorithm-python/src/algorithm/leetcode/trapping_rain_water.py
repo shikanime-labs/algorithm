@@ -8,6 +8,6 @@ class Solution:
             height = list(dropwhile(lambda x: 0 >= x, height))
             height = reversed(height)
             height = list(dropwhile(lambda x: 0 >= x, height))
-            water += sum(map(lambda x: x == 0, height))
+            water += sum(1 for x in height if x == 0)
             height = [max(x - 1, 0) for x in height]
         return water
