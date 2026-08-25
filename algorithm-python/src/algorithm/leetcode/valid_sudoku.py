@@ -17,19 +17,17 @@ class Solution:
 
     def isValidSodukuByCounter(self, board):
         return not any(
-            map(lambda counter: any(map(partial(ne, 1), counter.values())), board)
+            any(partial(ne, 1)(v) for v in counter.values()) for counter in board
         )
 
     def countByRows(self, board):
-        return map(
-            lambda offset: Counter(
-                filter(self.hasValue, map(partial(itemgetter(offset)), board))
-            ),
-            range(9),
+        return (
+            Counter(filter(self.hasValue, map(partial(itemgetter(offset)), board)))
+            for offset in range(9)
         )
 
     def countByColumns(self, board):
-        return map(lambda cells: Counter(filter(self.hasValue, cells)), board)
+        return (Counter(filter(self.hasValue, cells)) for cells in board)
 
     def countByBlocks(self, board):
         for row_offset in range(0, 9, 3):

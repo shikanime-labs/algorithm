@@ -9,6 +9,8 @@ name: Test
       - main
 jobs:
   test:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
