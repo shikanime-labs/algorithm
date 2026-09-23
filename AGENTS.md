@@ -50,3 +50,11 @@ reference.
 
 _Focus on time/space complexity and correctness. Always use worktrees when
 making changes._
+
+## Environment
+
+This repository ships a `.envrc` for direnv. Run `direnv allow` once after
+cloning; direnv then loads the Nix flake dev shell automatically on every
+directory change (`.envrc` runs
+`use flake . --accept-flake-config --no-pure-eval`). Without direnv, enter
+the same shell manually with `nix develop`.
